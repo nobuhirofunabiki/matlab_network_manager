@@ -41,5 +41,27 @@ classdef NetworkGraphExpression < handle
             pos_node2 = this.node_positions(:,node2);
             output = norm(pos_node1 - pos_node2);
         end
+        function visualizeNodePositions2D(this)
+            for iNode = 1:this.num_nodes
+                x = this.node_positions(1,iNode);
+                y = this.node_positions(2,iNode);
+                scatter(x, y, 'k');
+                hold on
+            end
+        end
+        function visualizeConnectedNetwork2D(this)
+            NUM_NODES = this.num_nodes;
+            for iNode = 1:NUM_NODES-1
+                for jNode = iNode+1:NUM_NODES
+                    if (this.adjacent_matrix(iNode, jNode) == 1)
+                        pos = this.node_positions;
+                        x_vector = [pos(1,iNode), pos(1,jNode)];
+                        y_vector = [pos(2,iNode), pos(2,jNode)];
+                        plot(x_vector, y_vector, 'k');
+                        hold on
+                    end
+                end
+            end
+        end
     end
 end

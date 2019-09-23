@@ -52,5 +52,13 @@ classdef NetworkGraphExpressionTest < matlab.unittest.TestCase
             testCase.verifyEqual(2.0, d24);
             testCase.verifyEqual(sqrt(2.0), d34);
         end
+        function testVisualizeNetwork2D(testCase)
+            nge_ = testCase.nge_;
+            nge_.setRangeThreshold(2.0);
+            nge_.updateAdjacentMatrixByRange();
+            figure
+            nge_.visualizeNodePositions2D();
+            nge_.visualizeConnectedNetwork2D();
+        end
     end
 end
