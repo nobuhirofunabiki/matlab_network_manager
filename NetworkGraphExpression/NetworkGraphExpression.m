@@ -27,12 +27,16 @@ classdef NetworkGraphExpression < handle
                 end
             end
         end
+
+        % Set functions
         function setNodePositions(this, args_positions)
             this.node_positions = args_positions;
         end
         function setRangeThreshold(this, arg_range)
             this.range_threshold = arg_range;
         end
+
+        % Get functions
         function output = getAdjacentMatrix(this)
             output = this.adjacent_matrix;
         end
@@ -41,6 +45,8 @@ classdef NetworkGraphExpression < handle
             pos_node2 = this.node_positions(:,node2);
             output = norm(pos_node1 - pos_node2);
         end
+
+        % Visualization
         function visualizeNodePositions2D(this)
             for iNode = 1:this.num_nodes
                 x = this.node_positions(1,iNode);
@@ -58,6 +64,21 @@ classdef NetworkGraphExpression < handle
                         x_vector = [pos(1,iNode), pos(1,jNode)];
                         y_vector = [pos(2,iNode), pos(2,jNode)];
                         plot(x_vector, y_vector, 'k');
+                        hold on
+                    end
+                end
+            end
+        end
+        function visualizeConnectedNetwork3D(this)
+            NUM_NODES = this.num_nodes;
+            for iNode = 1:NUM_NODES-1
+                for jNode = iNode+1:NUM_NODES
+                    if (this.adjacent_matrix(iNode, jNode) == 1)
+                        pos = this.node_positions;
+                        x_vector = [pos(1,iNode), pos(1,jNode)];
+                        y_vector = [pos(2,iNode), pos(2,jNode)];
+                        z_vector = [pos(3,iNode), pos(3,jNode)];
+                        plot3(x_vector, y_vector, z_vector, 'k');
                         hold on
                     end
                 end
