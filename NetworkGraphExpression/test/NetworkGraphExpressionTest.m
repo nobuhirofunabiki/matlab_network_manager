@@ -37,6 +37,14 @@ classdef NetworkGraphExpressionTest < matlab.unittest.TestCase
             adjacent_matrix = [0 1 1 0; 1 0 1 1; 1 1 0 1; 0 1 1 0];
             testCase.verifyEqual(nge_.getAdjacentMatrix(), adjacent_matrix);
         end
+        function testUpdateConnectionRate(testCase)
+            nge_ = testCase.nge_;
+            nge_.setRangeThreshold(2.0);
+            nge_.updateAdjacentMatrixByRange();
+            nge_.updateConnectionRate();
+            connection_rate = [2/3 1 1 2/3];
+            testCase.verifyEqual(nge_.getConnectionRate(), connection_rate);
+        end
         function testGetDistanceBetween2Nodes(testCase)
             nge_ = testCase.nge_;
             d12 = nge_.getDistanceBetween2Nodes(1, 2);
