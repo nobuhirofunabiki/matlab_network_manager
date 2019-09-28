@@ -62,6 +62,26 @@ classdef NetworkGraphExpression < handle
         end
 
         % Visualization
+        function visualizeConnectionRate(this)
+            connection_rate_percent = 100.0*this.connection_rate;
+            b = bar(connection_rate_percent);
+            b.FaceColor = 'flat';
+            for iNode = 1:this.num_nodes
+                conection_rate_iNode = connection_rate_percent(1,iNode);
+                if (conection_rate_iNode >= 75)
+                    b.CData(iNode,:) = [0 0 1];
+                elseif (conection_rate_iNode >= 50 && conection_rate_iNode < 75)
+                    b.CData(iNode,:) = [0 1 0];
+                elseif (conection_rate_iNode >= 25 && conection_rate_iNode < 50)
+                    b.CData(iNode,:) = [1 1 0];
+                else
+                    b.CData(iNode,:) = [1 0 0];
+                end
+            end
+            ylim([0,100]);
+            ylabel('Connection Rate [%]');
+            hold on
+        end
         function visualizeNodePositions2D(this)
             for iNode = 1:this.num_nodes
                 x = this.node_positions(1,iNode);

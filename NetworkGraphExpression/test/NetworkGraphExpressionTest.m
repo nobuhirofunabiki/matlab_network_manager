@@ -68,5 +68,13 @@ classdef NetworkGraphExpressionTest < matlab.unittest.TestCase
             nge_.visualizeNodePositions2D();
             nge_.visualizeConnectedNetwork2D();
         end
+        function testVisualizeConnectionRate(testCase)
+            nge_ = testCase.nge_;
+            nge_.setRangeThreshold(2.0);
+            nge_.updateAdjacentMatrixByRange();
+            nge_.updateConnectionRate();
+            figure
+            nge_.visualizeConnectionRate();
+        end
     end
 end
