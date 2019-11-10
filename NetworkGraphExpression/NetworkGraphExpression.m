@@ -3,6 +3,7 @@ classdef NetworkGraphExpression < handle
         num_nodes
         node_positions
         adjacent_matrix
+        stochastic_adjacency_matrix
         range_threshold
         connection_rate
     end
@@ -11,6 +12,7 @@ classdef NetworkGraphExpression < handle
             obj.num_nodes = args.num_nodes;
             obj.node_positions = args.node_positions;
             obj.adjacent_matrix = zeros(args.num_nodes, args.num_nodes);
+            obj.stochastic_adjacency_matrix = zeros((size(obj.adjacent_matrix)));
             obj.range_threshold = args.range_threshold;
             obj.connection_rate = zeros(1, args.num_nodes);
         end
@@ -30,6 +32,24 @@ classdef NetworkGraphExpression < handle
                 end
             end
             this.updateConnectionRate();
+        end
+
+        function updateStochasticAdjacencyMatrix(this)
+            this.stochastic_adjacency_matrix = ...
+                zeros(size(this.stochastic_adjacency_matrix));
+            NUM_NODES = this.num_nodes;
+            for iNodes = 1:NUM_NODES
+                for jNodes = 1:NUM_NODES
+                    if (this.adjacent_matrix(iNodes, jNodes) == 1)
+                        this.stochastic_adjacency_matrix(iNodes, jNodes) = ...
+                            1.0/max(this.getDigreeAtNode(iNodes), this.getDigreeAtNode(jNodes));
+                    end
+                end
+            end
+            for iNodes = 1:NUM_NODES
+                this.stochastic_adjacency_matrix(iNodes, iNodes) = ...
+                    1.0 - sum(this.stochastic_adjacency_matrix(iNodes,:));
+            end
         end
 
         function updateConnectionRate(this)
@@ -55,10 +75,16 @@ classdef NetworkGraphExpression < handle
         function output = getAdjacentMatrix(this)
             output = this.adjacent_matrix;
         end
+        function output = getStochasticAdjacencyMatrix(this)
+            output = this.stochastic_adjacency_matrix;
+        end
         function output = getDistanceBetween2Nodes(this, node1, node2)
             pos_node1 = this.node_positions(:,node1);
             pos_node2 = this.node_positions(:,node2);
             output = norm(pos_node1 - pos_node2);
+        end
+        function output = getDigreeAtNode(this, iAgents)
+            output = sum(this.adjacent_matrix(iAgents,:));
         end
 
         % Visualization

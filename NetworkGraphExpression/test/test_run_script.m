@@ -1,3 +1,6 @@
+clc
+clear
+close all
 addpath(genpath('../../NetworkGraphExpression'));
 import matlab.unittest.TestSuite
 suiteClass = TestSuite.fromClass(?NetworkGraphExpressionTest);

@@ -37,6 +37,15 @@ classdef NetworkGraphExpressionTest < matlab.unittest.TestCase
             adjacent_matrix = [0 1 1 0; 1 0 1 1; 1 1 0 1; 0 1 1 0];
             testCase.verifyEqual(nge_.getAdjacentMatrix(), adjacent_matrix);
         end
+        function testUpdateStochasticAdjacencyMatrix(testCase)
+            nge_ = testCase.nge_;
+            nge_.setRangeThreshold(1.5);
+            nge_.updateAdjacentMatrixByRange();
+            nge_.updateStochasticAdjacencyMatrix();
+            matrix_actual = nge_.getStochasticAdjacencyMatrix();
+            matrix_expected = [1/6 1/2 1/3 0; 1/2 1/6 1/3 0; 1/3 1/3 0 1/3; 0 0 1/3 2/3];
+            testCase.verifyEqual(matrix_actual, matrix_expected,'AbsTol', 10^(-10));
+        end
         function testUpdateConnectionRate(testCase)
             nge_ = testCase.nge_;
             nge_.setRangeThreshold(2.0);
