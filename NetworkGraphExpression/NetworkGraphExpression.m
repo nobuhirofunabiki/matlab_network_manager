@@ -75,6 +75,11 @@ classdef NetworkGraphExpression < handle
         function output = getAdjacentMatrix(this)
             output = this.adjacent_matrix;
         end
+        function output = getLocalAdjacentMatrix(this, iNodes)
+            output = zeros(size(this.adjacent_matrix));
+            output(iNodes,:) = this.adjacent_matrix(iNodes,:);
+            output(:,iNodes) = this.adjacent_matrix(:,iNodes);
+        end
         function output = getStochasticAdjacencyMatrix(this)
             output = this.stochastic_adjacency_matrix;
         end
