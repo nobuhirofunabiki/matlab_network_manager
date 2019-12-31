@@ -1,22 +1,22 @@
 classdef NetworkManagerBase < handle
     properties (SetAccess = protected)
+        range_threshold
+    end
+    properties (Abstract = true, SetAccess = protected)
         num_nodes
         node_positions
         adjacent_matrix
         stochastic_adjacency_matrix
-        range_threshold
         connection_rate
     end
-    methods
-        function obj = NetworkManagerBase(args)
-            obj.num_nodes = args.num_nodes;
-            obj.node_positions = args.node_positions;
-            obj.adjacent_matrix = zeros(args.num_nodes, args.num_nodes);
-            obj.stochastic_adjacency_matrix = zeros((size(obj.adjacent_matrix)));
-            obj.range_threshold = args.range_threshold;
-            obj.connection_rate = zeros(1, args.num_nodes);
-        end
 
+    methods (Access = protected)
+        function obj = NetworkManagerBase(args)
+            obj.range_threshold = args.range_threshold;
+        end
+    end
+
+    methods (Access = public)
         function updateAdjacentMatrixByRange(this)
             NUM_NODES = this.num_nodes;
             for iNode = 1:NUM_NODES-1
