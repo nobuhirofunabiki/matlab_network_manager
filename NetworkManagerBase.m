@@ -1,5 +1,5 @@
-classdef NetworkGraphExpression < handle
-    properties (SetAccess = private)
+classdef NetworkManagerBase < handle
+    properties (SetAccess = protected)
         num_nodes
         node_positions
         adjacent_matrix
@@ -8,7 +8,7 @@ classdef NetworkGraphExpression < handle
         connection_rate
     end
     methods
-        function obj = NetworkGraphExpression(args)
+        function obj = NetworkManagerBase(args)
             obj.num_nodes = args.num_nodes;
             obj.node_positions = args.node_positions;
             obj.adjacent_matrix = zeros(args.num_nodes, args.num_nodes);
