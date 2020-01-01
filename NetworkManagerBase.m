@@ -67,6 +67,10 @@ classdef NetworkManagerBase < handle
         function setRangeThreshold(this, arg_range)
             this.range_threshold = arg_range;
         end
+        function setAdjacentMatrixElement(this, iRows, iCols, b_connected)
+            assert(b_connected == 0 || b_connected == 1, 'Invalid argument');
+            this.adjacent_matrix(iRows, iCols) = b_connected;
+        end
 
         % Get functions
         function output = getConnectionRate(this)
