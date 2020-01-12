@@ -2,6 +2,7 @@ classdef NetworkManagerBase < handle
     properties (SetAccess = protected)
         range_threshold
     end
+
     properties (Abstract = true, SetAccess = protected)
         num_nodes
         node_positions
@@ -64,9 +65,11 @@ classdef NetworkManagerBase < handle
         function setNodePositions(this, args_positions)
             this.node_positions = args_positions;
         end
+
         function setRangeThreshold(this, arg_range)
             this.range_threshold = arg_range;
         end
+
         function setAdjacentMatrixElement(this, iRows, iCols, b_connected)
             assert(b_connected == 0 || b_connected == 1, 'Invalid argument');
             this.adjacent_matrix(iRows, iCols) = b_connected;
@@ -76,22 +79,27 @@ classdef NetworkManagerBase < handle
         function output = getConnectionRate(this)
             output = this.connection_rate;
         end
+
         function output = getAdjacentMatrix(this)
             output = this.adjacent_matrix;
         end
+
         function output = getLocalAdjacentMatrix(this, iNodes)
             output = zeros(size(this.adjacent_matrix));
             output(iNodes,:) = this.adjacent_matrix(iNodes,:);
             output(:,iNodes) = this.adjacent_matrix(:,iNodes);
         end
+
         function output = getStochasticAdjacencyMatrix(this)
             output = this.stochastic_adjacency_matrix;
         end
+
         function output = getDistanceBetween2Nodes(this, node1, node2)
             pos_node1 = this.node_positions(:,node1);
             pos_node2 = this.node_positions(:,node2);
             output = norm(pos_node1 - pos_node2);
         end
+        
         function output = getDigreeAtNode(this, iAgents)
             output = sum(this.adjacent_matrix(iAgents,:));
         end
@@ -117,6 +125,7 @@ classdef NetworkManagerBase < handle
             ylabel('Connection Rate [%]');
             hold on
         end
+
         function visualizeNodePositions2D(this)
             for iNode = 1:this.num_nodes
                 x = this.node_positions(1,iNode);
@@ -125,6 +134,7 @@ classdef NetworkManagerBase < handle
                 hold on
             end
         end
+
         function visualizeConnectedNetwork2D(this)
             NUM_NODES = this.num_nodes;
             for iNode = 1:NUM_NODES-1
@@ -139,6 +149,7 @@ classdef NetworkManagerBase < handle
                 end
             end
         end
+
         function visualizeConnectedNetwork2DCustomized(this, args)
             line_color = args.line_color;
             line_style = args.line_style;
@@ -159,6 +170,7 @@ classdef NetworkManagerBase < handle
                 end
             end
         end
+
         function visualizeConnectedNetwork3D(this)
             NUM_NODES = this.num_nodes;
             for iNode = 1:NUM_NODES-1
@@ -174,5 +186,28 @@ classdef NetworkManagerBase < handle
                 end
             end
         end
+
+        function visualizeConnectedNetwork3DCustomized(this, args)
+            line_color = args.line_color;
+            line_style = args.line_style;
+            line_width = args.line_width;
+            NUM_NODES = this.num_nodes;
+            for iNode = 1:NUM_NODES-1
+                for jNode = iNode+1:NUM_NODES
+                    if (this.adjacent_matrix(iNode, jNode) == 1)
+                        pos = this.node_positions;
+                        x_vector = [pos(1,iNode), pos(1,jNode)];
+                        y_vector = [pos(2,iNode), pos(2,jNode)];
+                        z_vector = [pos(3,iNode), pos(3,jNode)];
+                        plot3(x_vector, y_vector, z_vector, ...
+                        'Color', line_color, ...
+                        'LineStyle', line_style, ...
+                        'LineWidth', line_width);
+                        hold on
+                    end
+                end
+            end
+        end
+
     end
 end
