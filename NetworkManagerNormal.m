@@ -14,7 +14,7 @@ classdef NetworkManagerNormal < NetworkManagerBase
             obj.node_positions = args.node_positions;
             obj.adjacent_matrix = zeros(args.num_nodes, args.num_nodes);
             obj.stochastic_adjacency_matrix = zeros((size(obj.adjacent_matrix)));
-            obj.connection_rate = zeros(1, args.num_nodes);
+            obj.connection_rate = zeros(obj.num_nodes, args.num_steps);
         end
     end
 end

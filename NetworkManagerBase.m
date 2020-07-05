@@ -1,6 +1,7 @@
 classdef NetworkManagerBase < handle
     properties (SetAccess = protected)
         range_threshold
+        time_list
     end
 
     properties (Abstract = true, SetAccess = protected)
@@ -9,15 +10,31 @@ classdef NetworkManagerBase < handle
         adjacent_matrix
         stochastic_adjacency_matrix
         connection_rate
+        reachable_nodes
     end
 
     methods (Access = protected)
         function obj = NetworkManagerBase(args)
             obj.range_threshold = args.range_threshold;
+            obj.time_list = zeros(1, args.num_steps);
         end
     end
 
     methods (Access = public)
+        function updateNetwork(this, iSteps, time)
+            this.time_list(1, iSteps) = time;
+            this.updateAdjacentMatrixByRange();
+            this.updateStochasticAdjacencyMatrix();
+            this.updateConnectionRate(iSteps);
+            this.calculateReachableNodes(iSteps);
+        end
+    end
+
+    methods(Access = protected, Abstract = true)
+        calculateReachableNodes();
+    end
+    
+    methods (Access = protected)
         function updateAdjacentMatrixByRange(this)
             NUM_NODES = this.num_nodes;
             for iNode = 1:NUM_NODES-1
@@ -32,7 +49,7 @@ classdef NetworkManagerBase < handle
                     end
                 end
             end
-            this.updateConnectionRate();
+            % this.updateConnectionRate();
         end
 
         function updateStochasticAdjacencyMatrix(this)
@@ -53,13 +70,16 @@ classdef NetworkManagerBase < handle
             end
         end
 
-        function updateConnectionRate(this)
+        function updateConnectionRate(this, iSteps)
             NUM_NODES = this.num_nodes;
             for iNode = 1:NUM_NODES
                 sum_adjacent = sum(this.adjacent_matrix(iNode,:));
-                this.connection_rate(1, iNode) = sum_adjacent/(NUM_NODES-1);
+                this.connection_rate(iNode, iSteps) = sum_adjacent/(NUM_NODES-1);
             end
         end
+    end
+    
+    methods (Access = public)
 
         % Set functions
         function setNodePositions(this, args_positions)
@@ -105,25 +125,20 @@ classdef NetworkManagerBase < handle
         end
 
         % Visualization
-        function visualizeConnectionRate(this)
-            connection_rate_percent = 100.0*this.connection_rate;
-            b = bar(connection_rate_percent);
-            b.FaceColor = 'flat';
-            for iNode = 1:this.num_nodes
-                conection_rate_iNode = connection_rate_percent(1,iNode);
-                if (conection_rate_iNode >= 75)
-                    b.CData(iNode,:) = [0 0 1];
-                elseif (conection_rate_iNode >= 50 && conection_rate_iNode < 75)
-                    b.CData(iNode,:) = [0 1 0];
-                elseif (conection_rate_iNode >= 25 && conection_rate_iNode < 50)
-                    b.CData(iNode,:) = [1 1 0];
-                else
-                    b.CData(iNode,:) = [1 0 0];
-                end
-            end
-            ylim([0,100]);
-            ylabel('Connection Rate [%]');
+        function visualizeConnectionRate(this, line_width)
             hold on
+            plots = [];
+            plot_names = {};
+            color_list = colormap(jet(this.num_nodes));
+            for iNodes = 1:this.num_nodes
+                plot_iNodes = plot(this.time_list, 100.0*this.connection_rate(iNodes,:), ...
+                    'Color', color_list(iNodes,:), ...
+                    'LineWidth', line_width);
+                plots = horzcat(plots, [plot_iNodes]);
+                plot_names = horzcat(plot_names, {int2str(iNodes)});
+            end
+            legend(plots, plot_names, 'Location', 'northwest', 'FontSize', 8);
+            ylim([0, 100])
         end
 
         function visualizeNodePositions2D(this)
