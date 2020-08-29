@@ -31,7 +31,7 @@ classdef NetworkManagerBase < handle
     end
 
     methods(Access = protected, Abstract = true)
-        calculateReachableNodes();
+        calculateReachableNodes(this, iSteps);
     end
     
     methods (Access = protected)

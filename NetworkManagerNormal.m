@@ -5,6 +5,7 @@ classdef NetworkManagerNormal < NetworkManagerBase
         adjacent_matrix
         stochastic_adjacency_matrix
         connection_rate
+        reachable_nodes
     end
 
     methods (Access = public)
@@ -15,6 +16,12 @@ classdef NetworkManagerNormal < NetworkManagerBase
             obj.adjacent_matrix = zeros(args.num_nodes, args.num_nodes);
             obj.stochastic_adjacency_matrix = zeros((size(obj.adjacent_matrix)));
             obj.connection_rate = zeros(obj.num_nodes, args.num_steps);
+        end
+    end
+
+    methods (Access = protected)
+        function calculateReachableNodes(this, iSteps);
+            disp('temp')
         end
     end
 end
