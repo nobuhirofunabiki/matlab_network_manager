@@ -37,14 +37,20 @@ classdef NetworkManagerWithReferenceNode < NetworkManagerBase
                 this.stochastic_adjacency_matrix(iNodes, iNodes) = ...
                     1.0 - sum(this.stochastic_adjacency_matrix(iNodes,:));
             end
+            matrix_size = size(this.stochastic_adjacency_matrix, 2);
+            for iRow = 1:matrix_size
+                for jCol = 1:matrix_size
+                    if this.stochastic_adjacency_matrix(iRow, jCol) < 0
+                        this.stochastic_adjacency_matrix(iRow, jCol) = 0;
+                    end
+                end
+            end
         end
 
         function updateConnectionRate(this, iSteps)
-            NUM_NODES = this.num_nodes-1;
-            adjacent_matrix = this.adjacent_matrix(1:NUM_NODES, 1:NUM_NODES);
-            for iNode = 1:NUM_NODES
-                sum_adjacent = sum(adjacent_matrix(iNode,:));
-                this.connection_rate(iNode, iSteps) = sum_adjacent/(NUM_NODES-1);
+            for iNode = 1:this.num_nodes
+                sum_adjacent = sum(this.adjacent_matrix(iNode,:));
+                this.connection_rate(iNode, iSteps) = sum_adjacent/this.num_nodes;
             end
         end
 
@@ -79,11 +85,11 @@ classdef NetworkManagerWithReferenceNode < NetworkManagerBase
 
         function visualizeConnectionRate(this, line_width)
             hold on
-            num_nodes = this.num_nodes - 1;
+            num_nodes = this.num_nodes;
             plots = [];
             plot_names = {};
             color_list = colormap(jet(num_nodes));
-            for iNodes = 1:num_nodes
+            for iNodes = 1:num_nodes-1
                 plot_iNodes = plot(this.time_list, 100.0*this.connection_rate(iNodes,:), ...
                     'Color', color_list(iNodes,:), ...
                     'LineWidth', line_width);
@@ -91,6 +97,14 @@ classdef NetworkManagerWithReferenceNode < NetworkManagerBase
                 name = strcat('sat-', int2str(iNodes));
                 plot_names = horzcat(plot_names, {name});
             end
+            % Reference agent
+            plot_ref = plot(this.time_list, 100.0*this.connection_rate(num_nodes,:), ...
+                'Color', color_list(num_nodes,:), ...
+                'LineWidth', line_width);
+            plots = horzcat(plots, [plot_ref]);
+            name = 'sat-ref';
+            plot_names = horzcat(plot_names, {name});
+
             max_rate = 100.0*ones(1,length(this.time_list));
             plot_max = plot(this.time_list, max_rate, ...
                 'Color', 'k', ...

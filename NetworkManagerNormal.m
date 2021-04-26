@@ -21,7 +21,7 @@ classdef NetworkManagerNormal < NetworkManagerBase
 
     methods (Access = protected)
         function calculateReachableNodes(this, iSteps);
-            disp('temp')
+            % temporary comment
         end
     end
 end
